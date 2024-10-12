@@ -161,8 +161,9 @@ Here is where the magic is happening:
                 ip saddr @imapd_blacklist log prefix "[imapd_blacklist]" group 0 drop
         }
 ```
-This means: after an abuser has been stopped, every time he tries to log in again, his ban-time will
-automatically be reset to 1 hour. Only after giving up he will be "unbanned".
+
+This means: every time they try to log in, the ban-time will automatically be
+reset to 1 hour. Only after giving up they will be "unbanned".
 
 
 ## Disabling imapd_blacklist
