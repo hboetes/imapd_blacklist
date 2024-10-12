@@ -1,0 +1,15 @@
+
+# Expiration time
+expire=1h
+
+# I recommend you do not change the settings below, unless you have found I've
+# missed something important.
+
+# Select your cool name for the table here.
+name=imapd_blacklist
+
+# Target file for nftables config file.
+target=/etc/nftables/$name.nft
+
+# log entries matching these strings indicate a brute forcing attempt.
+regex='(Too many invalid commands|no auth attempts)'

@@ -1,0 +1,39 @@
+#!/bin/zsh
+
+# Thanks for the beautiful code!
+# https://unix.stackexchange.com/questions/258869/how-do-i-check-if-an-ip-address-or-a-network-is-contained-in-other-network-in-ba
+
+v4dec() {
+    for i; do
+        echo $i | {
+            IFS=./
+            read a b c d e
+            test -z "$e" && e=32
+            echo -n "$((a<<24|b<<16|c<<8|d)) $((-1<<(32-e))) "
+        }
+    done
+}
+
+v4test() {
+    v4dec $1 $2 | {
+        read addr1 mask1 addr2 mask2
+        if (( (addr1&mask2) == (addr2&mask2) && mask1 >= mask2 )); then
+            # echo "$1 is in network $2"
+            return 0
+        fi
+        # echo "$1 is not in network $2"
+        return 1
+    }
+}
+
+# Example test code for previous two functions.
+# v4test 10.1.2.3 10.0.0.0/8
+# v4test 10.1.2.0/24 10.0.0.0/8
+# v4test 192.168.0.1 10.0.0.0/8
+# v4test 10.0.0.0/9 10.0.0.0/8
+
+is_whitelisted() {
+    for whitelisted in $(< /etc/imapd_blacklist/whitelist); do
+        v4test $1 $whitelisted
+    done
+}

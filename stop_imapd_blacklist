@@ -1,0 +1,10 @@
+#!/bin/zsh
+
+# This file should be used to completely remove the imapd_blacklist table.
+
+source /etc/imapd_blacklist/settings
+source /etc/imapd_blacklist/functions
+
+# Clear out the existing table if it exists
+nft table ip $name
+nft delete table ip $name

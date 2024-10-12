@@ -1,0 +1,5 @@
+/var/log/ulogd/ulogd_syslogemu.log /var/log/ulogd/ulogd.log /var/log/ulogd.log /var/log/ulogd.syslogemu /var/log/ulogd.pktlog /var/log/ulogd.pcap {
+    missingok
+    daily
+    copytruncate
+}

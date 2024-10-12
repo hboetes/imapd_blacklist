@@ -1,0 +1,14 @@
+[Unit]
+Description=Block all brute force attacks on the imapd server.
+Wants=network.target network-online.target
+After=network.target network-online.target
+
+[Service]
+Type=simple
+ExecStartPre=/etc/nftables/imapd_blacklist.nft
+ExecStart=/etc/imapd_blacklist/logwatcher
+ExecStopPost=/etc/imapd_blacklist/save_imapd_blacklist
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

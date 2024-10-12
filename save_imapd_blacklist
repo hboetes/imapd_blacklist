@@ -1,0 +1,16 @@
+#!/bin/zsh
+# This file saves the actual running table to disk. To run before shutdowns.
+source /etc/imapd_blacklist/settings
+store=/etc/nftables/$name.nft
+
+# Now create the final config file, with all entries added.
+# Actually, let nft create the file.
+cat << EOF > $store
+#!/usr/sbin/nft -f
+# THIS FILE IS GENERATED AND WILL BE OVERWRITTEN.
+# Create this table to make sure it exists when we delete it. Get it? :-)
+table ip $name
+delete table ip $name
+$(nft list table $name)
+EOF
+chmod 755 $store

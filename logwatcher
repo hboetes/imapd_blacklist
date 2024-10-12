@@ -1,0 +1,20 @@
+#!/bin/zsh
+
+source /etc/imapd_blacklist/settings
+source /etc/imapd_blacklist/functions
+
+journalctl -f -u dovecot | grep -Ea --line-buffered "$regex" | sed -u -e 's|.*rip=\([0-9.]*\),.*|\1|' | while read eikel; do
+    # I don't want to lock myself out.
+    if is_whitelisted "$eikel"; then
+        echo "$eikel whitelisted"
+        continue
+    fi
+    country=$(geoiplookup "$eikel" | sed -e 's|.*: ||')
+    # XXX whitelist by country?
+    # if echo "$country" | grep -q 'Ambrosia$'; then
+    #     echo "$eikel from Ambrosia."
+    #     continue
+    # fi
+    echo "Blocked $eikel from $country"
+    nft add element ip $name $name "{ $eikel timeout $expire expires $expire }"
+done

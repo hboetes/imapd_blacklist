@@ -1,0 +1,38 @@
+#!/bin/zsh
+
+# This file should be used to set up the initial table.
+
+source /etc/imapd_blacklist/settings
+source /etc/imapd_blacklist/functions
+
+# First clear out the existing table if it exists
+nft table ip $name
+nft delete table ip $name
+
+# Set up table.
+cat << EOF > /etc/nftables/$name.nft
+#!/usr/sbin/nft -f
+# First create the table, so we can flush it, even if it didn't exist before.
+table ip $name
+flush table ip $name
+table ip $name {
+    set $name {
+        type ipv4_addr
+        size 65535
+        flags dynamic,timeout
+    }
+
+    chain permissiondenied {
+        type filter hook input priority filter - 10
+        policy accept
+        ip saddr @$name update @$name { ip saddr timeout $expire }
+        ip saddr @$name log prefix "[$name]" group 0 drop
+    }
+}
+EOF
+
+# Then load this file into the running ruleset
+chmod 755 /etc/nftables/$name.nft
+/etc/nftables/$name.nft
+# And save it to disk.
+/etc/imapd_blacklist/save_imapd_blacklist
